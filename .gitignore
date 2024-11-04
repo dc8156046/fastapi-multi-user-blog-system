@@ -1,0 +1,14 @@
+// This file is used to ignore files and directories in the repository
+// For more information about the .gitignore file, see https://git-scm.com/docs/gitignore
+.venv/
+.env/
+.env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+
