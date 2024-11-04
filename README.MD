@@ -5,7 +5,8 @@ A multi-user blog system built with Python FastAPI, SQLAlchemy, and PostgreSQL, 
 ## Features
 
 - User registration and authentication
-- Create, read, update, and delete blog posts
+- Create, read, update, and delete blog categories and posts
+- Like and unlike blog post
 - Comment on posts with support for images
 - Like comments and track likes count
 - Secure API endpoints with JWT authentication
@@ -34,7 +35,7 @@ pip install -r requirements.txt
 Create a .env file in the root directory and add the following variables:
 
 ```bash
-DATABASE_URL=postgresql://username:password@localhost:5432/fastapi_tutorial
+DATABASE_URL=postgresql://username:password@localhost:5432/fastapi_blog
 SECRET_KEY=your_secret_key_here
 ```
 
