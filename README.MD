@@ -1,6 +1,6 @@
 # Multi-User Blog System
 
-A multi-user blog system built with Python FastAPI, SQLAlchemy, and PostgreSQL, allowing users to create and manage blog posts, comments, and likes.
+A multi-user blog system built with Python FastAPI, SQLAlchemy, and PostgreSQL, allowing users to create and manage blog categories, posts, comments, and likes.
 
 ## Features
 
