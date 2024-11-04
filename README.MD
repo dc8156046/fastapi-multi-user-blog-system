@@ -1,6 +1,6 @@
 # Multi-User Blog System
 
-A multi-user blog system built with FastAPI, SQLAlchemy, and PostgreSQL, allowing users to create and manage blog posts, comments, and likes.
+A multi-user blog system built with Python FastAPI, SQLAlchemy, and PostgreSQL, allowing users to create and manage blog posts, comments, and likes.
 
 ## Features
 
@@ -56,5 +56,5 @@ Make sure you have the following installed:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/dc815606/multi-user-blog-system.git
-cd multi-user-blog-system
+git clone https://github.com/dc815606/fastapi-multi-user-blog-system.git
+cd fastapi-multi-user-blog-system
