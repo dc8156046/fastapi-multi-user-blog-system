@@ -37,17 +37,28 @@ class Token(BaseModel):
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(request: CreateUserRequest, db: Annotated[Session, Depends(get_db)]):
-    is_user_exist = db.query(User).filter(User.username == request.username).first()
-    if is_user_exist:
+    # Check if username already exists
+    if db.query(User).filter(User.username == request.username).first():
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
-    is_email_exist = db.query(User).filter(User.email == request.email).first()
-    if is_email_exist:
+    
+    # Check if email already exists
+    if db.query(User).filter(User.email == request.email).first():
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
-    user = User(username=request.username, hashed_password=pwd_context.hash(request.password), email=request.email, is_active=False, created_at=datetime.now(), updated_at=datetime.now())
-    db.add(user)
+    
+    # Create new user
+    new_user = User(
+        username=request.username,
+        email=request.email,
+        hashed_password=pwd_context.hash(request.password),
+        is_active=False,
+        created_at=datetime.now(),
+        updated_at=datetime.now()
+    )
+    db.add(new_user)
     db.commit()
-    db.refresh(user)
-    return {"message": "User register successfully"}
+    db.refresh(new_user)
+    
+    return {"message": "User registered successfully"}
     
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Annotated[Session, Depends(get_db)]):

@@ -16,6 +16,9 @@ class User(Base):
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
+    # Establish relationship with the Post model
+    posts = relationship("Post", back_populates="author")
+
 class Category(Base):
     __tablename__ = "categories"
 
@@ -26,6 +29,9 @@ class Category(Base):
     description = Column(String)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+
+    # Establish relationship with the Post model
+    posts = relationship("Post", back_populates="category")
 
 class Post(Base):
     __tablename__ = "posts"
@@ -45,7 +51,7 @@ class Post(Base):
     author = relationship("User", back_populates="posts")
     category = relationship("Category", back_populates="posts")
     images = relationship("PostImage", back_populates="post", cascade="all, delete-orphan")
-    tags = relationship("Tag", secondary="post_tags", back_populates="posts")
+    tags = relationship("PostTag", back_populates="post")
     comments = relationship("Comment", back_populates="post", cascade="all, delete-orphan")
     likes = relationship("Like", back_populates="post", cascade="all, delete-orphan")
 
@@ -55,12 +61,20 @@ class Tag(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
 
+    # Establish relationship with the Post model
+    posts = relationship("PostTag", back_populates="tag")
+
+
 class PostTag(Base):
     __tablename__ = "post_tags"
 
     id = Column(Integer, primary_key=True, index=True)
     post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"))
     tag_id = Column(Integer, ForeignKey("tags.id", ondelete="CASCADE"))
+
+    # Establish relationship with the Post model
+    post = relationship("Post", back_populates="tags")
+    tag = relationship("Tag", back_populates="posts")
 
 class Comment(Base):
     __tablename__ = "comments"
@@ -87,6 +101,9 @@ class Like(Base):
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
+    # Establish relationship with the Post model
+    post = relationship("Post", back_populates="likes")
+
 
 class CommentLike(Base):
     __tablename__ = "comment_likes"
@@ -96,6 +113,9 @@ class CommentLike(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+
+    # Establish relationship with the Comment model
+    comment = relationship("Comment", back_populates="likes")
 
 class Follow(Base):
     __tablename__ = "follows"
@@ -115,6 +135,11 @@ class PostImage(Base):
     image_url = Column(String)
     created_at = Column(DateTime)
 
+    # Establish relationship with the Post model
+    post = relationship("Post", back_populates="images")
+
+    
+
 class CommentImage(Base):
     __tablename__ = "comment_images"
 
@@ -122,3 +147,6 @@ class CommentImage(Base):
     comment_id = Column(Integer, ForeignKey("comments.id", ondelete="CASCADE"))
     image_url = Column(String)
     created_at = Column(DateTime)
+
+    # Establish relationship with the Comment model
+    comment = relationship("Comment", back_populates="images")
