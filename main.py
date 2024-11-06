@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from typing import Annotated
 from sqlalchemy.orm import Session
-import auth, post, category, comment
+import auth, post, category, comment, tag
 from auth import get_current_user
 import models
 from database import SessionLocal, engine, get_db
@@ -14,6 +14,7 @@ app.include_router(auth.router)
 app.include_router(post.router)
 app.include_router(category.router)
 app.include_router(comment.router)
+app.include_router(tag.router)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -31,12 +32,14 @@ app.add_middleware(
 )
 
 
-db_dependency = Annotated[Session, Depends(get_db)]
-user_dependency = Annotated[User, Depends(get_current_user)]
+# db_dependency = Annotated[Session, Depends(get_db)]
+# user_dependency = Annotated[User, Depends(get_current_user)]
 
-@app.get("/", status_code=status.HTTP_200_OK)
-async def user(user: user_dependency):
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
-    return {"User": user}
-    
+
+# @app.get("/", status_code=status.HTTP_200_OK)
+# async def user(user: user_dependency):
+#     if user is None:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
+#         )
+#     return {"User": user}

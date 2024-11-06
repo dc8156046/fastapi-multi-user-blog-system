@@ -20,31 +20,46 @@ router = APIRouter(
 
 SECRET_KEY = env_value["SECRET_KEY"]
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+
 
 class CreateUserRequest(BaseModel):
     username: str
     email: str
     password: str
 
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
+    username: str
+    user_id: int
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user(request: CreateUserRequest, db: Annotated[Session, Depends(get_db)]):
+async def create_user(
+    request: CreateUserRequest, db: Annotated[Session, Depends(get_db)]
+):
     # Check if username already exists
     if db.query(User).filter(User.username == request.username).first():
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
-    
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Username already exists"
+        )
+
     # Check if email already exists
     if db.query(User).filter(User.email == request.email).first():
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
-    
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Email already exists"
+        )
+
     # Create new user
     new_user = User(
         username=request.username,
@@ -52,16 +67,20 @@ async def create_user(request: CreateUserRequest, db: Annotated[Session, Depends
         hashed_password=pwd_context.hash(request.password),
         is_active=False,
         created_at=datetime.now(),
-        updated_at=datetime.now()
+        updated_at=datetime.now(),
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    
+
     return {"message": "User registered successfully"}
-    
+
+
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Annotated[Session, Depends(get_db)]):
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Annotated[Session, Depends(get_db)],
+):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(
@@ -69,8 +88,15 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    token = create_access_token(user.username, user.id, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    return {"access_token": token, "token_type": "bearer"}
+    token = create_access_token(
+        user.username, user.id, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "username": user.username,
+        "user_id": user.id,
+    }
 
 
 def authenticate_user(username: str, password: str, db):
@@ -81,11 +107,20 @@ def authenticate_user(username: str, password: str, db):
         return False
     return user
 
+
 def create_access_token(username: str, user_id: int, expires_delta: timedelta):
-    to_encode = {"sub": username, "id": user_id, "exp": datetime.utcnow() + expires_delta}
+    to_encode = {
+        "sub": username,
+        "id": user_id,
+        "exp": datetime.utcnow() + expires_delta,
+    }
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[Session, Depends(get_db)]):
+
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Annotated[Session, Depends(get_db)],
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -102,4 +137,4 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: An
     user = db.query(User).filter(User.username == username).first()
     if user is None:
         raise credentials_exception
-    return {'username':user.username, 'id':user.id}
+    return user
