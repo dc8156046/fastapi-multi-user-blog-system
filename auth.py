@@ -10,15 +10,14 @@ from database import SessionLocal, get_db
 from models import User
 from starlette import status
 from dotenv import dotenv_values
-
-env_value = dotenv_values(".env")
+import os
 
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
 )
 
-SECRET_KEY = env_value["SECRET_KEY"]
+SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
