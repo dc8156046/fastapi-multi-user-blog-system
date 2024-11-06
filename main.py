@@ -7,7 +7,7 @@ import models
 from database import SessionLocal, engine, get_db
 from models import User
 from fastapi.middleware.cors import CORSMiddleware
-
+import os
 
 app = FastAPI()
 app.include_router(auth.router)
@@ -17,10 +17,9 @@ app.include_router(comment.router)
 app.include_router(tag.router)
 
 models.Base.metadata.create_all(bind=engine)
-
+CLIENT_URL = os.environ.get("CLIENT_URL")
 origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    CLIENT_URL,
 ]
 
 app.add_middleware(

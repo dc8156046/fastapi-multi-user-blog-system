@@ -79,7 +79,7 @@ async def get_all_posts(db: db_dependency, skip: int = 0, limit: int = 9):
 
 # Get all published posts
 @router.get("/published", response_model=List[PostOut])
-async def get_published_posts(db: db_dependency, skip: int = 0, limit: int = 9):
+async def get_published_posts(db: db_dependency, skip: int = 0, limit: int = 10):
     posts = (
         db.query(Post).filter(Post.is_published == True).offset(skip).limit(limit).all()
     )
