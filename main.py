@@ -19,7 +19,7 @@ app.include_router(tag.router)
 models.Base.metadata.create_all(bind=engine)
 CLIENT_URL = os.environ.get("CLIENT_URL")
 origins = [
-    CLIENT_URL,
+    "*",
 ]
 
 app.add_middleware(
