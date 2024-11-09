@@ -122,6 +122,17 @@ async def get_post(post_id: int, db: db_dependency):
     return post
 
 
+# search posts by title or content
+@router.get("/search", response_model=List[PostOut])
+async def search_posts(query: str, db: db_dependency):
+    posts = (
+        db.query(Post)
+        .filter(Post.title.ilike(f"%{query}%") | Post.content.ilike(f"%{query}%"))
+        .all()
+    )
+    return posts
+
+
 user_dependency = Annotated[User, Depends(get_current_user)]
 
 
