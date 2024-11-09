@@ -2,10 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Annotated
 from pydantic import BaseModel, Field
-from typing import List, Optional
 from datetime import datetime
 from database import get_db
-from models import Post, User
+from models import User
 from auth import get_current_user
 
 router = APIRouter(
