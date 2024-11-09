@@ -147,3 +147,10 @@ async def delete_category(category_id: int, db: db_dependency, user: user_depend
     db.delete(category)
     db.commit()
     return
+
+
+# get all categories
+@router.get("/all", response_model=List[CategoryOut], status_code=status.HTTP_200_OK)
+async def get_all_categories(db: db_dependency):
+    categories = db.query(Category).all()
+    return categories
