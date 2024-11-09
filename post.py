@@ -86,7 +86,7 @@ async def get_published_posts(db: db_dependency, skip: int = 0, limit: int = 10)
     return posts
 
 
-@router.get("/posts/{category_id}", response_model=List[PostOut])
+@router.get("/category/{category_id}", response_model=List[PostOut])
 async def get_posts_by_category(
     db: db_dependency, category_id: int, skip: int = 0, limit: int = 10
 ):
