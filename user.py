@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Annotated
 from pydantic import BaseModel, Field
+from typing import List, Optional
 from datetime import datetime
 from database import get_db
 from models import User
@@ -19,8 +20,8 @@ db_dependency = Annotated[Session, Depends(get_db)]
 class UserOut(BaseModel):
     id: int
     username: str
-    avatar: str
-    bio: str
+    avatar: Optional[str]
+    bio: Optional[str]
 
     class Config:
         from_attributes = True
