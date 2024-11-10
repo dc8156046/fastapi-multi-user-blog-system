@@ -1,6 +1,11 @@
-# Multi-User Blog System
+## Multi-User Blog System
 
 A multi-user blog system built with Python FastAPI, SQLAlchemy, and PostgreSQL, allowing users to create and manage blog categories, posts, comments, and likes.
+
+## Deployed on Render
+```bash
+https://fastapi-multi-user-blog-system.onrender.com
+```
 
 ## Features
 
