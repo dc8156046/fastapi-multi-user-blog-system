@@ -165,3 +165,14 @@ class CommentImage(Base):
 
     # Establish relationship with the Comment model
     comment = relationship("Comment", back_populates="images")
+
+
+class Contact(Base):
+    __tablename__ = "contacts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    email = Column(String, index=True)
+    message = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

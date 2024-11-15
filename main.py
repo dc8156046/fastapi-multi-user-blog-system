@@ -32,8 +32,17 @@ app.add_middleware(
 )
 
 
-# db_dependency = Annotated[Session, Depends(get_db)]
+db_dependency = Annotated[Session, Depends(get_db)]
 # user_dependency = Annotated[User, Depends(get_current_user)]
+
+
+@app.post("/contact", status_code=status.HTTP_201_CREATED)
+async def contact(name: str, email: str, message: str, db: Session = db_dependency):
+    new_contact = models.Contact(name=name, email=email, message=message)
+    db.add(new_contact)
+    db.commit()
+    db.refresh(new_contact)
+    return new_contact
 
 
 # @app.get("/", status_code=status.HTTP_200_OK)
