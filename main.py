@@ -43,16 +43,23 @@ class ContactCreate(BaseModel):
     message: str
 
 
+class ContactResponse(BaseModel):
+    message: str
+    contact_id: int
+
+
 # Contact form
-@app.post("/contact", status_code=status.HTTP_201_CREATED)
-async def contact(contact: ContactCreate, db: Session = db_dependency):
+@app.post(
+    "/contact", response_model=ContactResponse, status_code=status.HTTP_201_CREATED
+)
+async def contact(contact: ContactCreate, db: db_dependency):
     new_contact = Contact(
         name=contact.name, email=contact.email, message=contact.message
     )
     db.add(new_contact)
     db.commit()
     db.refresh(new_contact)
-    return {"message": "success"}
+    return {"message": "success", "contact_id": new_contact.id}
 
 
 # @app.get("/", status_code=status.HTTP_200_OK)
