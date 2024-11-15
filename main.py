@@ -3,9 +3,10 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 import auth, post, category, comment, tag, user
 from auth import get_current_user
+from pydantic import BaseModel
 import models
 from database import SessionLocal, engine, get_db
-from models import User
+from models import Contact
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
@@ -36,13 +37,20 @@ db_dependency = Annotated[Session, Depends(get_db)]
 # user_dependency = Annotated[User, Depends(get_current_user)]
 
 
+class Contact(BaseModel):
+    name: str
+    email: str
+    message: str
+
+
+# Contact form
 @app.post("/contact", status_code=status.HTTP_201_CREATED)
-async def contact(name: str, email: str, message: str, db: Session = db_dependency):
-    new_contact = models.Contact(name=name, email=email, message=message)
+async def contact(name: str, email: str, message: str, db: db_dependency):
+    new_contact = Contact(name=name, email=email, message=message)
     db.add(new_contact)
     db.commit()
     db.refresh(new_contact)
-    return new_contact
+    return {"message": "success"}
 
 
 # @app.get("/", status_code=status.HTTP_200_OK)
