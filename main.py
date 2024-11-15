@@ -37,7 +37,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 # user_dependency = Annotated[User, Depends(get_current_user)]
 
 
-class Contact(BaseModel):
+class ContactCreate(BaseModel):
     name: str
     email: str
     message: str
@@ -45,8 +45,10 @@ class Contact(BaseModel):
 
 # Contact form
 @app.post("/contact", status_code=status.HTTP_201_CREATED)
-async def contact(name: str, email: str, message: str, db: db_dependency):
-    new_contact = Contact(name=name, email=email, message=message)
+async def contact(contact: ContactCreate, db: Session = db_dependency):
+    new_contact = Contact(
+        name=contact.name, email=contact.email, message=contact.message
+    )
     db.add(new_contact)
     db.commit()
     db.refresh(new_contact)
